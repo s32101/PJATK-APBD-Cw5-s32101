@@ -1,13 +1,43 @@
 using Microsoft.AspNetCore.Mvc;
+using PJATK_APBD_Cw5_s32101.Models;
 
 namespace PJATK_APBD_Cw5_s32101.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ReservationsController : Controller
+public class ReservationsController : ControllerBase
 {
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IActionResult Index()
+    [HttpGet("")]
+    public IActionResult GetAll(
+        DateTime? date = null,
+        string? status = null,
+        Guid? roomId = null)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpGet("{id:guid}")]
+    public IActionResult GetSingle([FromRoute] Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("")]
+    public IActionResult CreateReservation([FromBody] Reservation reservation)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPut("{id:guid}")]
+    public IActionResult UpdateReservation(
+        [FromRoute] Guid id,
+        [FromBody] Reservation reservation)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpDelete("{id:guid}")]
+    public IActionResult DeleteReservation([FromRoute] Guid id)
     {
         throw new NotImplementedException();
     }
