@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace PJATK_APBD_Cw5_s32101.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class ReservationsController : Controller
 {
     [HttpGet(Name = "GetWeatherForecast")]
