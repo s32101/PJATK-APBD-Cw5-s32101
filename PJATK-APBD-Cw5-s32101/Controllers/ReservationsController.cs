@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using PJATK_APBD_Cw5_s32101.Database;
 using PJATK_APBD_Cw5_s32101.Models;
 
 namespace PJATK_APBD_Cw5_s32101.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ReservationsController : ControllerBase
+public class ReservationsController(IDatabase db) : ControllerBase
 {
     [HttpGet("")]
     public IActionResult GetAll(
