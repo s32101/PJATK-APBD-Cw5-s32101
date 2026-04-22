@@ -27,16 +27,27 @@ public class ReservationsController(IDatabase db) : ControllerBase
         return Ok(obj);
     }
 
-    private bool IsValid(Reservation reservation)
+    private string? IsValid(Reservation reservation)
     {
         /*
-         TODO: reguły:
-           Nie wolno dodać rezerwacji dla sali, która nie istnieje.
+          Reguły:
+           Nie wolno dodać rezerwacji dla sali, która nie istnieje. +
            Nie wolno dodać rezerwacji dla sali oznaczonej jako nieaktywna.
            Dwie rezerwacje tej samej sali nie mogą nakładać się czasowo tego samego dnia.
          */
-        
-        throw new NotImplementedException(); //TODO
+
+        var room = db.Rooms.FirstOrDefault(r => r.Id == reservation.RoomId);
+        if (room == null)
+            return "Pokój nie istnieje";
+
+        if (!room.IsActive)
+            return "Pokój nie jest aktywny";
+
+        var overlappingReservation = db.Reservations.Any(r => r.StartTime >= reservation.StartTime && r.StartTime <= reservation.EndTime);
+        if (overlappingReservation)
+            return "Nowa rezerwacja zachodzi na istniejącą rezerwację. Upewnij się o dostępności terminów.";
+
+        return null;
     }
     
     [HttpPost("")]
@@ -44,9 +55,10 @@ public class ReservationsController(IDatabase db) : ControllerBase
     {
         if (db.Reservations.Any(r => r.Id == reservation.Id))
             return Conflict();
-        
-        if (!IsValid(reservation))
-            return Conflict();
+
+        var error = IsValid(reservation);
+        if (error != null)
+            return Conflict(error);
         
         db.Reservations.Add(reservation);
         return Created();
@@ -60,8 +72,9 @@ public class ReservationsController(IDatabase db) : ControllerBase
         if (reservation.Id != id)
             return BadRequest();
         
-        if (!IsValid(reservation))
-            return Conflict();
+        var error = IsValid(reservation);
+        if (error != null)
+            return Conflict(error);
         
         var obj = db.Reservations.FirstOrDefault(x => x.Id == id);
         if (obj == null)
