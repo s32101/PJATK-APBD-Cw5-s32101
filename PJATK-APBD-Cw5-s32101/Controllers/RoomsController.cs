@@ -12,19 +12,33 @@ public class RoomsController(IDatabase db) : ControllerBase
     public IActionResult GetAll(int? minCapacity = null, 
         bool? hasProjector = null, bool? activeOnly = null)
     {
-        throw new NotImplementedException();
+        var query = db.Rooms.AsQueryable();
+        if (minCapacity.HasValue)
+            query = query.Where(r => r.Capacity >= minCapacity.Value);
+        
+        if (hasProjector.HasValue)
+            query = query.Where(r => r.HasProjector == hasProjector.Value);
+        
+        if (activeOnly.HasValue)
+            query = query.Where(r => r.IsActive == activeOnly.Value);
+
+        return Ok(query.ToList());
     }
     
     [HttpGet("{id:guid}")]
     public IActionResult GetSingle([FromRoute] Guid id)
     {
-        throw new NotImplementedException();
+        var obj = db.Rooms.FirstOrDefault(x => x.Id == id);
+        if (obj == null)
+            return NotFound();
+
+        return Ok(obj);
     }
     
-    [HttpGet("building/{buildingId:guid}")]
-    public IActionResult GetAllFromBuilding(Guid buildingId)
+    [HttpGet("building/{buildingCode}")]
+    public IActionResult GetAllFromBuilding(string buildingCode)
     {
-        throw new NotImplementedException();
+        return Ok(db.Rooms.Where(r => r.BuildingCode.Equals(buildingCode, StringComparison.OrdinalIgnoreCase)));
     }
     
     [HttpPost("")]

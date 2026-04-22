@@ -14,13 +14,17 @@ public class ReservationsController(IDatabase db) : ControllerBase
         string? status = null,
         Guid? roomId = null)
     {
-        throw new NotImplementedException();
+        return Ok(db.Reservations);
     }
 
     [HttpGet("{id:guid}")]
     public IActionResult GetSingle([FromRoute] Guid id)
     {
-        throw new NotImplementedException();
+        var obj = db.Reservations.FirstOrDefault(x => x.Id == id);
+        if (obj == null)
+            return NotFound();
+
+        return Ok(obj);
     }
 
     [HttpPost("")]
