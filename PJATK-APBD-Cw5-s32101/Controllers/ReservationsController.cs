@@ -29,6 +29,13 @@ public class ReservationsController(IDatabase db) : ControllerBase
 
     private bool IsValid(Reservation reservation)
     {
+        /*
+         TODO: reguły:
+           Nie wolno dodać rezerwacji dla sali, która nie istnieje.
+           Nie wolno dodać rezerwacji dla sali oznaczonej jako nieaktywna.
+           Dwie rezerwacje tej samej sali nie mogą nakładać się czasowo tego samego dnia.
+         */
+        
         throw new NotImplementedException(); //TODO
     }
     
