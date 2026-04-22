@@ -27,10 +27,22 @@ public class ReservationsController(IDatabase db) : ControllerBase
         return Ok(obj);
     }
 
+    private bool IsValid(Reservation reservation)
+    {
+        throw new NotImplementedException(); //TODO
+    }
+    
     [HttpPost("")]
     public IActionResult CreateReservation([FromBody] Reservation reservation)
     {
-        throw new NotImplementedException();
+        if (db.Reservations.Any(r => r.Id == reservation.Id))
+            return Conflict();
+        
+        if (!IsValid(reservation))
+            return Conflict();
+        
+        db.Reservations.Add(reservation);
+        return Created();
     }
 
     [HttpPut("{id:guid}")]
@@ -38,12 +50,29 @@ public class ReservationsController(IDatabase db) : ControllerBase
         [FromRoute] Guid id,
         [FromBody] Reservation reservation)
     {
-        throw new NotImplementedException();
+        if (reservation.Id != id)
+            return BadRequest();
+        
+        if (!IsValid(reservation))
+            return Conflict();
+        
+        var obj = db.Reservations.FirstOrDefault(x => x.Id == id);
+        if (obj == null)
+            return NotFound();
+
+        db.Reservations.Remove(obj);
+        db.Reservations.Add(reservation);
+        return NoContent();
     }
 
     [HttpDelete("{id:guid}")]
     public IActionResult DeleteReservation([FromRoute] Guid id)
     {
-        throw new NotImplementedException();
+        var obj = db.Reservations.FirstOrDefault(x => x.Id == id);
+        if (obj == null)
+            return NotFound();
+        
+        db.Reservations.Remove(obj);
+        return NoContent();
     }
 }
