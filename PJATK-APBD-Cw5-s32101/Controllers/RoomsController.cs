@@ -44,18 +44,36 @@ public class RoomsController(IDatabase db) : ControllerBase
     [HttpPost("")]
     public IActionResult InsertRoom([FromBody] Room room)
     {
-        throw new NotImplementedException();
+        if (db.Rooms.Any(r => r.Id == room.Id))
+            return Conflict();
+        
+        db.Rooms.Add(room);
+        return Created();
     }
     
     [HttpPut("{id:guid}")]
     public IActionResult UpdateRoom([FromRoute] Guid id, [FromBody] Room room)
     {
-        throw new NotImplementedException();
+        if (room.Id != id)
+            return BadRequest();
+        
+        var obj = db.Rooms.FirstOrDefault(x => x.Id == id);
+        if (obj == null)
+            return NotFound();
+
+        db.Rooms.Remove(obj);
+        db.Rooms.Add(room);
+        return NoContent();
     }
     
     [HttpDelete("{id:guid}")]
     public IActionResult DeleteRoom([FromRoute] Guid id)
     {
-        throw new NotImplementedException();
+        var obj = db.Rooms.FirstOrDefault(x => x.Id == id);
+        if (obj == null)
+            return NotFound();
+        
+        db.Rooms.Remove(obj);
+        return NoContent();
     }
 }
