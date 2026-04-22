@@ -69,12 +69,12 @@ public class RoomsController(IDatabase db) : ControllerBase
     [HttpDelete("{id:guid}")]
     public IActionResult DeleteRoom([FromRoute] Guid id)
     {
-        //TODO: Usunięcie sali może zwracać 409 Conflict, jeśli dla tej sali istnieją przyszłe rezerwacje,
-        //albo możesz przyjąć prostszą wersję i nie pozwalać usuwać sali z powiązanymi rezerwacjami.
-        
         var obj = db.Rooms.FirstOrDefault(x => x.Id == id);
         if (obj == null)
             return NotFound();
+
+        if (db.Reservations.Any(r => r.RoomId == id && r.StartTime >= DateTime.UtcNow))
+            return Conflict("Występuje rezerwacja dla usuwanego pokoju. Przerywam.");
         
         db.Rooms.Remove(obj);
         return NoContent();
